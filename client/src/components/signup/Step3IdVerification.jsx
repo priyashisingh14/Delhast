@@ -61,21 +61,21 @@ export const Step3IdVerification = ({
     <div className="space-y-6">
       <div className="text-left">
         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-          Verify student ID
+          Verify Student ID Card
         </h2>
         <p className="mt-1 text-xs sm:text-sm text-slate-500">
-          Upload a clear photo of your student ID card to confirm your identity.
+          Upload your student ID card photo. AI Vision will verify your Name & Registration Number before proceeding.
         </p>
       </div>
 
       {/* Info Pill */}
       <div className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex items-center justify-between text-xs text-slate-600">
         <div>
-          <span className="text-slate-400 block text-[11px]">Matching Name:</span>
+          <span className="text-slate-400 block text-[11px]">Expected Name:</span>
           <span className="font-semibold text-slate-900">{studentDetails?.fullName || 'Student'}</span>
         </div>
         <div className="text-right">
-          <span className="text-slate-400 block text-[11px]">Roll Number:</span>
+          <span className="text-slate-400 block text-[11px]">Expected Reg. No:</span>
           <span className="font-mono font-bold text-indigo-600">
             {studentDetails?.registrationNumber || 'N/A'}
           </span>
@@ -122,25 +122,25 @@ export const Step3IdVerification = ({
               onClick={handleVerify}
               className="w-2/3 shadow-sm shadow-indigo-600/20"
             >
-              Verify Student ID <ArrowRight className="w-4 h-4 ml-1.5" />
+              {isScanning ? 'AI Vision Verifying...' : 'Verify with AI Vision'} <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* OCR Success Match Result State */}
+      {/* AI Vision Match Result State */}
       {scanResult && (
         <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-200 space-y-4 animate-fadeIn">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center border border-emerald-200">
-              <FileCheck className="w-5 h-5" />
+              <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900">
-                ID Card Verified Successfully
+                AI Vision Verification Passed!
               </h3>
               <p className="text-xs text-emerald-700">
-                Identity verified with college records.
+                Name and Registration Number confirmed on your ID card.
               </p>
             </div>
           </div>
