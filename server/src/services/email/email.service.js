@@ -16,10 +16,10 @@ class EmailService {
   }
 
   initProvider() {
-    if (process.env.RESEND_API_KEY) {
-      this.provider = new ResendProvider();
-    } else if (process.env.BREVO_API_KEY) {
+    if (process.env.BREVO_API_KEY) {
       this.provider = new BrevoProvider();
+    } else if (process.env.RESEND_API_KEY) {
+      this.provider = new ResendProvider();
     } else if (env.EMAIL_PROVIDER === 'gmail') {
       this.provider = new GmailProvider();
     } else {
