@@ -1,18 +1,4 @@
-# Apex Institute — Student Authentication & Verification System (MERN Stack)
 
-A complete, production-ready, secure, and scalable college student registration and authentication portal built on the **MERN** stack (MongoDB, Express.js, React 19, Node.js).
-
-The system enforces strict student eligibility through **Gmail OTP verification**, **physical College ID Card OCR verification**, and **College Master Student Database matching**, combined with database-level uniqueness constraints and 30-day session persistence via secure HttpOnly refresh cookies.
-
----
-
-## 1. Project Overview
-
-In academic environments, verifying the legitimacy of student accounts is paramount. This project implements a streamlined, multi-step verification pipeline:
-- **No Face Detection / No Live Selfie**: Identity verification is strictly document-OCR based.
-- **No Phone OTP**: Indian mobile numbers are validated and stored canonically (+91 XXXXXXXXXX) for student records without SMS verification overhead.
-- **Zero-Cost Email Architecture**: Starts with a ₹0-cost development implementation using **Gmail SMTP + Nodemailer**, completely decoupled behind a provider interface (`EmailService` -> `EmailProvider` -> `GmailProvider` / `MockEmailProvider`) so it can be swapped for SendGrid, Resend, or on-premise SMTP at scale without touching authentication logic.
-- **In-Memory Zero-Config Database Fallback**: If no external MongoDB URI is provided, the backend boots an embedded in-memory MongoDB server (`mongodb-memory-server`) automatically for zero-friction evaluation.
 
 ---
 
