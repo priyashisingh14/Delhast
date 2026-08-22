@@ -9,7 +9,7 @@
     "dev": "concurrently -n \"SERVER,CLIENT\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
     "dev:server": "npm run dev --prefix server",
     "dev:client": "npm run dev --prefix client",
-    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client --include=dev",
     "test": "npm run test --prefix server",
     "test:unit": "npm run test:unit --prefix server",
     "test:e2e": "npm run test:e2e --prefix server",
