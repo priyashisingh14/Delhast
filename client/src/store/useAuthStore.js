@@ -22,8 +22,8 @@ const getStoredAuth = () => {
     user: null,
     accessToken: null,
     isAuthenticated: false,
-    isLoading: true,
-    isInitialized: false
+    isLoading: false,
+    isInitialized: true
   };
 };
 

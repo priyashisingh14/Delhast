@@ -11,6 +11,28 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { useAuthStore } from './store/useAuthStore';
 
+// If user is already logged in, redirect away from public auth pages to /dashboard
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated, isInitialized } = useAuthStore();
+
+  if (isInitialized && isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return children;
+};
+
+// Root route: / -> if logged in, go to /dashboard; if not logged in, go to /signup
+const RootRoute = () => {
+  const { isAuthenticated, isInitialized } = useAuthStore();
+
+  if (isInitialized && isAuthenticated) {
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  return <SignUpPage />;
+};
+
 export const App = () => {
   const { initAuth } = useAuthStore();
 
@@ -22,10 +44,10 @@ export const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Authentication Routes (Preserved Exactly) */}
-        <Route path="/" element={<SignUpPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/signin" element={<SignInPage />} />
+        {/* Public Authentication Routes (Auto-redirect to /dashboard if already logged in) */}
+        <Route path="/" element={<RootRoute />} />
+        <Route path="/signup" element={<PublicRoute><SignUpPage /></PublicRoute>} />
+        <Route path="/signin" element={<PublicRoute><SignInPage /></PublicRoute>} />
         <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/welcome" element={<WelcomePage />} />
 
