@@ -21,38 +21,30 @@ class IdentityService {
   async verifyIdentity({ enteredName, enteredRegNo, ocrName, ocrRegNo, rawText = '' }) {
     logger.info(`Verifying Identity: User [${enteredName}, ${enteredRegNo}] vs OCR [${ocrName}, ${ocrRegNo}]`);
 
-    const cleanEnteredRegNo = (enteredRegNo || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    const cleanRawText = (rawText || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    const cleanOcrRegNo = (ocrRegNo || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+    // 1. Enhanced Fuzzy & Homoglyph Registration Match
+    const regMatchResult = matchRegistrationNumbers(enteredRegNo, ocrRegNo, rawText);
 
-    // 1. Direct Registration Number Check in raw OCR text or extracted field
-    const isRegInRawText = cleanEnteredRegNo && cleanRawText.includes(cleanEnteredRegNo);
-    const isRegMatch = isRegInRawText || (cleanOcrRegNo && matchRegistrationNumbers(enteredRegNo, ocrRegNo).isMatch);
+    // Check if rawText contains common college ID card markers
+    const hasCollegeKeywords = /\b(STUDENT|IDENTITY|COLLEGE|INSTITUTE|UNIVERSITY|CAMPUS|ENGINEERING|SEMESTER|BRANCH|BATCH|CARD|ADMISSION|ROLL|REGISTRATION|DEPARTMENT|SIGNATURE)\b/i.test(rawText);
 
-    if (!isRegMatch) {
-      logger.warn(`Registration mismatch: Entered '${enteredRegNo}' not found in OCR text or '${ocrRegNo}'`);
-      return {
-        verified: false,
-        errorType: 'REGISTRATION_MISMATCH',
-        message: 'The registration number entered during signup does not match the registration number on your college ID card. Please check your details and try again.'
-      };
-    }
-
-    // 2. Name Check in OCR extracted field or raw text
+    // 2. Fuzzy Name Match
     const nameMatch = matchNames(enteredName, ocrName || '');
     const cleanEnteredName = normalizeName(enteredName).toLowerCase();
     const cleanRawTextLower = (rawText || '').toLowerCase();
 
     const nameTokens = cleanEnteredName.split(/\s+/).filter(t => t.length >= 2);
-    const allTokensInRawText = nameTokens.length > 0 && nameTokens.every(token => cleanRawTextLower.includes(token));
-    const isNameMatch = nameMatch.isMatch || allTokensInRawText || (cleanEnteredName.length > 3 && cleanRawTextLower.includes(cleanEnteredName));
+    const anyTokenInRawText = nameTokens.length > 0 && nameTokens.some(token => cleanRawTextLower.includes(token));
+    const isNameMatch = nameMatch.isMatch || anyTokenInRawText || (cleanEnteredName.length > 3 && cleanRawTextLower.includes(cleanEnteredName));
 
-    if (!isNameMatch) {
-      logger.warn(`Name mismatch: Entered '${enteredName}' vs OCR '${ocrName}'`);
+    // Verify either registration matches OR (college card detected AND at least partial name/reg match)
+    const isVerified = regMatchResult.isMatch || (hasCollegeKeywords && (isNameMatch || regMatchResult.confidence >= 0.5));
+
+    if (!isVerified) {
+      logger.warn(`Registration mismatch: Entered '${enteredRegNo}' not recognized in OCR text (Extracted: '${ocrRegNo}')`);
       return {
         verified: false,
-        errorType: 'NAME_MISMATCH',
-        message: 'The name entered during registration does not match the name found on your college ID card. Please check your details and try again.'
+        errorType: 'REGISTRATION_MISMATCH',
+        message: 'The registration number entered during signup does not match the registration number on your college ID card. Please ensure the card photo is clear and well lit.'
       };
     }
 
