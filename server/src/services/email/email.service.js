@@ -1,6 +1,8 @@
 const env = require('../../config/env');
 const logger = require('../../utils/logger');
 const GmailProvider = require('./gmail.provider');
+const ResendProvider = require('./resend.provider');
+const BrevoProvider = require('./brevo.provider');
 const MockEmailProvider = require('./mock.provider');
 const { getOtpEmailHtml } = require('./templates/otpEmail.template');
 const { getPasswordResetEmailHtml } = require('./templates/passwordResetEmail.template');
@@ -14,7 +16,11 @@ class EmailService {
   }
 
   initProvider() {
-    if (env.EMAIL_PROVIDER === 'gmail') {
+    if (process.env.RESEND_API_KEY) {
+      this.provider = new ResendProvider();
+    } else if (process.env.BREVO_API_KEY) {
+      this.provider = new BrevoProvider();
+    } else if (env.EMAIL_PROVIDER === 'gmail') {
       this.provider = new GmailProvider();
     } else {
       this.mockProviderInstance = new MockEmailProvider();
