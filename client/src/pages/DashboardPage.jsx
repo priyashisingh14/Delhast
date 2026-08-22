@@ -34,32 +34,6 @@ import {
   Trash2
 } from 'lucide-react';
 
-// Curated food thumbnails matching canteen meals
-const FOOD_IMAGES = {
-  chole: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?w=200&auto=format&fit=crop&q=80',
-  paneer: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=200&auto=format&fit=crop&q=80',
-  thali: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=200&auto=format&fit=crop&q=80',
-  sandwich: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=200&auto=format&fit=crop&q=80',
-  burger: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=200&auto=format&fit=crop&q=80',
-  dosa: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=200&auto=format&fit=crop&q=80',
-  biryani: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200&auto=format&fit=crop&q=80',
-  coffee: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=200&auto=format&fit=crop&q=80',
-  default: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&auto=format&fit=crop&q=80'
-};
-
-const getFoodImage = (foodText) => {
-  if (!foodText) return FOOD_IMAGES.default;
-  const lower = foodText.toLowerCase();
-  if (lower.includes('chole') || lower.includes('bhature')) return FOOD_IMAGES.chole;
-  if (lower.includes('paneer') || lower.includes('thali') || lower.includes('rice')) return FOOD_IMAGES.paneer;
-  if (lower.includes('sandwich') || lower.includes('toast')) return FOOD_IMAGES.sandwich;
-  if (lower.includes('burger')) return FOOD_IMAGES.burger;
-  if (lower.includes('dosa') || lower.includes('idli')) return FOOD_IMAGES.dosa;
-  if (lower.includes('biryani')) return FOOD_IMAGES.biryani;
-  if (lower.includes('coffee') || lower.includes('chai') || lower.includes('tea')) return FOOD_IMAGES.coffee;
-  return FOOD_IMAGES.default;
-};
-
 export const DashboardPage = () => {
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -723,7 +697,7 @@ export const DashboardPage = () => {
               {[1, 2, 3].map((n) => (
                 <div key={n} className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-2xs flex items-center justify-between gap-4 animate-pulse">
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full bg-slate-200" />
+                    <div className="w-12 h-12 rounded-2xl bg-slate-200 shrink-0" />
                     <div className="space-y-2">
                       <div className="h-4 w-32 bg-slate-200 rounded-md" />
                       <div className="h-3 w-24 bg-slate-100 rounded-md" />
@@ -788,25 +762,17 @@ export const DashboardPage = () => {
               {filteredOrders.map((order) => {
                 const isCustomer = order.customerId?._id?.toString() === user?.id?.toString() || order.customerId?.toString() === user?.id?.toString();
                 const isDeliveryPerson = order.deliveryPersonId?._id?.toString() === user?.id?.toString() || order.deliveryPersonId?.toString() === user?.id?.toString();
-                const foodImage = getFoodImage(order.foodDetails);
 
                 return (
                   <div
                     key={order._id}
                     className="bg-white border border-slate-100 rounded-2xl p-4 sm:p-5 hover:shadow-md transition-all shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-4"
                   >
-                    {/* Left: Dish Thumbnail & Details */}
+                    {/* Left: Icon & Food Details */}
                     <div className="flex items-center gap-4 min-w-0">
-                      {/* Circular Food Photo */}
-                      <div className="relative w-16 h-16 sm:w-18 sm:h-18 rounded-full shrink-0 overflow-hidden border-2 border-orange-100 shadow-2xs bg-orange-50">
-                        <img
-                          src={foodImage}
-                          alt={order.foodDetails}
-                          className="w-full h-full object-cover"
-                        />
-                        <div className="absolute bottom-0 left-0 w-6 h-6 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700 text-xs shadow-2xs">
-                          🍴
-                        </div>
+                      {/* Clean Food Icon Badge */}
+                      <div className="w-12 h-12 rounded-2xl shrink-0 flex items-center justify-center bg-emerald-50 text-[#236B48] border border-emerald-200/70 shadow-2xs">
+                        <UtensilsCrossed className="w-5 h-5" />
                       </div>
 
                       {/* Details */}
