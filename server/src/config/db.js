@@ -16,7 +16,7 @@ const connectDB = async () => {
       try {
         logger.info('Attempting connection to configured MongoDB URI...');
         mongoose.set('strictQuery', true);
-        await mongoose.connect(uri, { serverSelectionTimeoutMS: 5000 });
+        await mongoose.connect(uri, { serverSelectionTimeoutMS: 10000 });
         logger.success('Connected to MongoDB successfully');
 
         await mongoose.syncIndexes().catch((err) => {
@@ -25,28 +25,39 @@ const connectDB = async () => {
 
         return mongoose.connection;
       } catch (atlasErr) {
-        logger.warn('Could not connect to external MongoDB URI (IP may not be whitelisted in Atlas):', atlasErr.message);
-        logger.info('Falling back to local in-memory MongoDB for seamless development...');
+        logger.error('Could not connect to external MongoDB URI:', atlasErr.message);
+        if (env.NODE_ENV === 'production') {
+          throw new Error(
+            `MongoDB connection failed in production: ${atlasErr.message}. ` +
+            'Please verify MONGODB_URI on Render and ensure MongoDB Atlas Network Access allows 0.0.0.0/0.'
+          );
+        }
+        logger.info('Falling back to local in-memory MongoDB for development...');
       }
     }
 
-    // In-memory fallback
-    const { MongoMemoryServer } = require('mongodb-memory-server');
-    mongoMemoryServer = await MongoMemoryServer.create();
-    uri = mongoMemoryServer.getUri();
-    logger.success(`In-memory MongoDB initialized at: ${uri}`);
+    // In-memory fallback for local development only
+    try {
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      mongoMemoryServer = await MongoMemoryServer.create();
+      uri = mongoMemoryServer.getUri();
+      logger.success(`In-memory MongoDB initialized at: ${uri}`);
 
-    mongoose.set('strictQuery', true);
-    await mongoose.connect(uri);
-    logger.success('Connected to in-memory MongoDB successfully');
+      mongoose.set('strictQuery', true);
+      await mongoose.connect(uri);
+      logger.success('Connected to in-memory MongoDB successfully');
 
-    await mongoose.syncIndexes().catch((err) => {
-      logger.warn('Index sync notice:', err.message);
-    });
+      await mongoose.syncIndexes().catch((err) => {
+        logger.warn('Index sync notice:', err.message);
+      });
 
-    return mongoose.connection;
+      return mongoose.connection;
+    } catch (memErr) {
+      logger.error('In-memory MongoDB fallback failed:', memErr.message);
+      throw new Error('No valid MongoDB connection available. Please configure MONGODB_URI in environment variables.');
+    }
   } catch (error) {
-    logger.error('Failed to connect to MongoDB:', error.message);
+    logger.error('Fatal Database Connection Error:', error.message);
     throw error;
   }
 };
