@@ -9,6 +9,7 @@ const generalLimiter = rateLimit({
   max: isTest ? 10000 : 200,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   message: {
     success: false,
     error: 'RATE_LIMIT_EXCEEDED',
@@ -22,6 +23,7 @@ const otpSendLimiter = rateLimit({
   max: isTest ? 1000 : 10,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   message: {
     success: false,
     error: 'OTP_REQUEST_LIMIT',
@@ -35,6 +37,7 @@ const otpVerifyLimiter = rateLimit({
   max: isTest ? 1000 : 20,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   message: {
     success: false,
     error: 'OTP_VERIFY_LIMIT',
@@ -48,6 +51,7 @@ const loginLimiter = rateLimit({
   max: isTest ? 1000 : 15,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   message: {
     success: false,
     error: 'LOGIN_ATTEMPTS_EXCEEDED',
@@ -61,6 +65,7 @@ const ocrUploadLimiter = rateLimit({
   max: isTest ? 1000 : 25,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: { xForwardedForHeader: false, trustProxy: false },
   message: {
     success: false,
     error: 'UPLOAD_LIMIT_EXCEEDED',
