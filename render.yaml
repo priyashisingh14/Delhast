@@ -1,0 +1,26 @@
+﻿services:
+  - type: web
+    name: delhast-app
+    env: node
+    plan: free
+    buildCommand: npm run install:all && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: EMAIL_PROVIDER
+        value: gmail
+      - key: GMAIL_USER
+        value: delhastt@gmail.com
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: CLIENT_URL
+        value: https://delhast-app.onrender.com
