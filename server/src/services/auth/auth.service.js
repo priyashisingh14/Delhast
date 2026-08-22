@@ -162,8 +162,17 @@ class AuthService {
       return otpResult;
     }
 
-    // Dispatch OTP via decoupled EmailService
-    await emailService.sendEmailVerificationOtp(email, otpResult.otp);
+    try {
+      // Dispatch OTP via decoupled EmailService
+      await emailService.sendEmailVerificationOtp(email, otpResult.otp);
+    } catch (emailErr) {
+      logger.error(`Failed to dispatch OTP email to ${email}:`, emailErr.message);
+      return {
+        success: false,
+        error: 'EMAIL_SEND_FAILED',
+        message: 'Could not send verification email. Please check your Gmail address or try again in a few moments.'
+      };
+    }
 
     return {
       success: true,

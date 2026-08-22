@@ -12,26 +12,27 @@ class GmailProvider extends EmailProviderInterface {
   }
 
   initializeTransporter() {
-    if (!env.SMTP_USER || !env.SMTP_PASSWORD) {
+    const user = (env.SMTP_USER || process.env.GMAIL_USER || '').trim();
+    const pass = (env.SMTP_PASSWORD || process.env.GMAIL_APP_PASSWORD || '').replace(/\s+/g, '');
+
+    if (!user || !pass) {
       logger.warn('Gmail SMTP credentials not provided. Gmail provider will run in dormant mode.');
       return;
     }
 
     this.transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
+      service: 'gmail',
       auth: {
-        user: env.SMTP_USER.trim(),
-        pass: env.SMTP_PASSWORD.replace(/\s+/g, '')
+        user,
+        pass
       },
-      connectionTimeout: 10000,
-      greetingTimeout: 10000,
-      socketTimeout: 15000
+      connectionTimeout: 15000,
+      greetingTimeout: 15000,
+      socketTimeout: 20000
     });
 
     this.isInitialized = true;
-    logger.info(`Gmail SMTP Provider initialized for sender: ${env.SMTP_USER}`);
+    logger.info(`Gmail SMTP Provider initialized for sender: ${user}`);
   }
 
   async verifyConnection() {

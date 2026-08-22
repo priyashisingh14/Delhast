@@ -27,8 +27,8 @@ const envSchema = z.object({
   SMTP_HOST: z.string().default('smtp.gmail.com'),
   SMTP_PORT: z.coerce.number().default(587),
   SMTP_SECURE: z.coerce.boolean().default(false),
-  SMTP_USER: z.string().default(''),
-  SMTP_PASSWORD: z.string().default(''),
+  SMTP_USER: z.string().default('').transform(val => val || process.env.GMAIL_USER || process.env.SMTP_USER || ''),
+  SMTP_PASSWORD: z.string().default('').transform(val => val || process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASSWORD || ''),
 
   // OTP Settings
   OTP_LENGTH: z.coerce.number().default(6),
