@@ -64,7 +64,7 @@ export const Step3IdVerification = ({
           Verify Student ID Card
         </h2>
         <p className="mt-1 text-xs sm:text-sm text-slate-500">
-          Upload your student ID card photo. AI Vision will verify your Name & Registration Number before proceeding.
+          Upload your student ID card photo. 
         </p>
       </div>
 
@@ -122,7 +122,7 @@ export const Step3IdVerification = ({
               onClick={handleVerify}
               className="w-2/3 shadow-sm shadow-indigo-600/20"
             >
-              {isScanning ? 'AI Vision Verifying...' : 'Verify with AI Vision'} <ArrowRight className="w-4 h-4 ml-1.5" />
+              {isScanning ? 'Verifying...' : 'Verify '} <ArrowRight className="w-4 h-4 ml-1.5" />
             </Button>
           </div>
         </div>
@@ -137,7 +137,7 @@ export const Step3IdVerification = ({
             </div>
             <div>
               <h3 className="text-sm font-bold text-slate-900">
-                AI Vision Verification Passed!
+                Verification Passed!
               </h3>
               <p className="text-xs text-emerald-700">
                 Name and Registration Number confirmed on your ID card.
